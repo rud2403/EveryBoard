@@ -48,9 +48,7 @@ public class UserController {
 			e.printStackTrace();
 			
 			result = 0;
-			
 		}
-		
 		return result;
 	}
 	
