@@ -1,0 +1,158 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+    PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+    
+<mapper namespace="com.springbootvue.project.dao.UserMapper">
+    <insert id="signUp" parameterType="com.springbootvue.project.dto.UserDTO">
+        INSERT INTO
+        	 user(email, password, name, role)
+       	VALUES
+       		 (#{email}, #{password}, #{name}, #{role})
+    </insert>
+    
+    <!-- 로그인 -->
+    <select id="login" parameterType="com.springbootvue.project.dto.UserDTO" resultType="map">
+	    select
+			email, password
+		from
+			user
+		where
+			email = #{email}
+    </select>
+    
+    <!-- 유저 정보 가져오기 -->
+    <select id="getByUser" parameterType="String" resultType="map">
+	    select
+			id, email, name, role
+		from
+			user
+		where
+			email = #{email}
+    </select>
+    
+    <!-- 마이페이지 -> 내 게시글 가져오기 -->
+    <select id="getMyBoardList" parameterType="map" resultType="map">
+	    select
+			*
+		from
+			user u
+		join
+			board b on u.id = b.id
+		where
+			u.id = #{id}
+		limit
+			#{currentPage},10
+    </select>
+    
+    <!-- 마이페이지 -> 내 게시글 total 가져오기 -->
+    <select id="getMyBoardListTotal" parameterType="map" resultType="int">
+    	select
+			count(*)
+		from
+			board
+		where
+			id = #{id}
+    </select>
+    
+    <!-- 마이페이지 -> 내 댓글 가져오기 -->
+    <select id="getMyReplyList" parameterType="map" resultType="map">
+	    select
+			u.name name, 
+			c.content content, 
+			b.num num, 
+			b.title title, 
+			b.content boardContent, 
+			b.author author, 
+			b.regdate regdate, 
+			b.readcount readcount, 
+			b.likecount likecount, 
+			b.id id
+		from
+			user u
+		join
+			reply c on u.id = c.userId
+		join
+			board b on c.boardNum = b.num
+		where
+			u.id = #{id}
+		limit 
+			#{currentPage},10
+    </select>
+    
+    <!-- 마이페이지 -> 내 댓글 total 가져오기 -->
+    <select id="getMyReplyListTotal" parameterType="map" resultType="int">
+		select
+			count(*)
+		from
+			reply
+		where
+			userId = #{id}
+    </select>
+    
+    <!-- 마이페이지 -> 유저 정보 수정 -->
+    <update id="changMemberInfo" parameterType="com.springbootvue.project.dto.UserDTO">
+    	update
+			user
+		set
+			email = #{email}, name = #{name}
+		where
+			id = #{id}
+    </update>
+    
+    <!-- 아이디로 유저 정보 가져오기 -->
+    <select id="getUserById" parameterType="Integer" resultType="map">
+    	select
+			id, email, name, role
+		from
+			user
+		where
+			id = #{id}
+    </select>
+    
+    <!-- 마이페이지 -> 회원 탈퇴 -->
+    <delete id="deleteMemberInfo" parameterType="com.springbootvue.project.dto.UserDTO">
+	    delete
+		from
+			user
+		where
+			id = #{id}
+    </delete>
+    
+    <!-- 관리자 페이지 -> 유저 관리 ( 유저 리스트 가져오기 ) -->
+    <select id="adminGetUser" parameterType="int" resultType="map">
+	    select
+			id, email, name, role
+		from
+			user
+		limit
+			#{currentPage}, 10
+    </select>
+    
+    <!-- 관리자 페이지 유저 리스트 토탈 가져오기 -->
+    <select id="adminGetUserTotal" resultType="int">
+    	select
+			count(*)
+		from
+			user
+    </select>
+    
+    <!-- 관리자 페이지 회원 정보 수정 -->
+    <update id="adminChangeUser" parameterType="com.springbootvue.project.dto.UserDTO">
+    	update
+    		user
+    	set
+    		email = #{email}, name = #{name}, role = #{role}
+    	where
+    		id = #{id}
+    </update>
+    
+    <!-- 관리자 페이지 회원 탈퇴 -->
+    <delete id="adminDeleteUser" parameterType="com.springbootvue.project.dto.UserDTO">
+    	delete
+    	from
+    		user
+    	where
+    		id = #{id}
+    </delete>
+</mapper>

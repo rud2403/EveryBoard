@@ -1,0 +1,174 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+    PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+    
+<mapper namespace="com.springbootvue.project.dao.BoardMapper">
+
+	<!-- 게시글 작성 -->
+    <insert id="write" parameterType="com.springbootvue.project.dto.BoardDTO">
+        INSERT INTO
+        	 board(title, content, author, readcount, likecount, filepath, regdate, id)
+       	VALUES
+       		 (#{title}, #{content}, #{author}, #{readcount}, #{likecount}, #{filepath}, sysdate(), #{id})
+    </insert>
+    
+    <!-- 게시글 내용 가져오기 -->
+    <select id="getBoard" parameterType="map" resultType="map">
+	    select
+				*
+		from
+				board
+		<where>
+			<if test='searchInput != null and searchSelect != null'>${searchSelect} like CONCAT('%',#{searchInput},'%')</if>
+		</where>
+		limit
+				#{currentPage},10
+    </select>
+    
+    <!-- 게시글 total가져오기 -->
+    <select id="getBoardTotal" resultType="int">
+    	select
+			count(*)
+		from
+			board
+    </select>
+    
+    <!-- 게시글 수정 -->
+    <update id="edit" parameterType="com.springbootvue.project.dto.BoardDTO">
+    	update
+    		board
+    	set
+    		title = #{title}, content = #{content}
+    	where
+    		num = #{num}
+    </update>
+
+	<!-- 게시글 삭제 -->
+	<delete id="delete" parameterType="com.springbootvue.project.dto.BoardDTO">
+		delete
+		from
+			board
+		where
+			num = #{num}
+	</delete>
+	
+	<!-- 조회수 업데이트 -->
+	<update id="updateReadCount" parameterType="com.springbootvue.project.dto.UserDTO">
+    	update
+			board
+		set
+			readcount = readcount +1
+		where
+			num = #{num}
+    </update>
+	
+	<!-- 조회수 가져오기 -->
+	<select id="getBoardReadCount" parameterType="com.springbootvue.project.dto.BoardDTO" resultType="int">
+		select
+			readcount
+		from
+			board
+		where
+			num = #{num}
+	</select>
+	
+	<!-- 댓글 등록 -->
+	<insert id="regReply" parameterType="com.springbootvue.project.dto.ReplyDTO">
+        INSERT INTO
+        	 reply(userId, boardNum, content)
+       	VALUES
+       		 (#{userId}, #{boardNum}, #{content})
+    </insert>
+    
+    <!-- 댓글 가져오기 -->
+    <select id="getReply" parameterType="com.springbootvue.project.dto.ReplyDTO" resultType="map">
+	    select
+				*
+		from
+				reply r
+		left join
+				user u on u.id = r.userId
+		where
+				boardNum = #{boardNum}
+    </select>
+    
+    <!-- 댓글 총 개수 가져오기 -->
+    <select id="getReplyTotal" parameterType="com.springbootvue.project.dto.ReplyDTO" resultType="int">
+	    select
+				count(*)
+		from
+				reply
+		where
+				boardNum = #{boardNum}
+    </select>
+    
+    <!-- 댓글 수정 -->
+    <update id="editReply" parameterType="com.springbootvue.project.dto.ReplyDTO">
+    	update
+			reply
+		set
+			content = #{content}
+		where
+			num = #{num}
+    </update>
+    
+    <!-- 댓글 삭제 -->
+    <delete id="deleteReply" parameterType="com.springbootvue.project.dto.ReplyDTO">
+    	delete
+    	from
+    		reply
+    	where
+    		num = #{num}
+    </delete>
+    
+    <!-- 추천 기능 -->
+    <select id="liked" parameterType="map" resultType="map">
+    	select
+    		*
+    	from
+    		liked
+    	where
+    		boardNum = #{boardNum} and userId = #{userId}
+    </select>
+    
+    <!-- 추천 기능 -->
+    <insert id="addliked" parameterType="map">
+        insert into
+        	 liked(boardNum, userId)
+       	values
+       		 (#{boardNum}, #{userId})
+    </insert>
+    
+    <!-- 추천 클릭 시 추천 수 가져오기 -->
+    <update id="updateliked" parameterType="map">
+    	update
+    		board
+    	set
+    		likecount = likecount + 1
+    	where
+    		num = #{boardNum}
+    </update>
+    
+    <!-- 게시글 추천수 가져오기 -->
+    <select id="getliked" parameterType="com.springbootvue.project.dto.ReplyDTO" resultType="int">
+    	select
+    		likecount
+    	from
+    		board
+    	where
+    		num = #{num}
+    </select>
+    
+    <!-- 인기게시판 게시글 가져오기 -->
+    <select id="getPopList" resultType="map">
+    	select
+    		*
+    	from
+    		board
+    	ORDER BY
+    		likecount DESC
+    	limit
+    		0,10
+    </select>
+</mapper>
