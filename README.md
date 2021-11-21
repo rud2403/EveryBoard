@@ -1,7 +1,3 @@
-# EveryBoard
-
-&nbsp;
-
 # Introduction
 
 Vue.js와 SpringBoot를 연동한 SPA 커뮤니티
