@@ -1,7 +1,6 @@
 # EveryBoard
 
 &nbsp;
-&nbsp;
 
 # Introduction
 
