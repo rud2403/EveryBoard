@@ -1,6 +1,11 @@
+# EveryBoard
+
+&nbsp;
+&nbsp;
+
 # Introduction
 
-Vue.js와 SpringBoot를 연동한 커뮤니티 SPA 게시판
+Vue.js와 SpringBoot를 연동한 SPA 커뮤니티
 
 
 - 개발 기간 : 21.11.01 - 21.11.17
